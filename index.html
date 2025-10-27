@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>КОТ БАЮН: АЙС 26 ПОМОЩНИК</title>
+    <title>КОТ БАЮН: AI-ПИТОМЕЦ-ХУЕСОС</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* === Стилизация: АЙС 26 (Глубокий, Чистый Темный Стиль) === */
+        /* === Стилизация: TOXIC RETRO-GLITCH === */
         :root {
-            --bg-deep: #1A1A1A;
-            --bg-card: #2C2C2E;
-            --text-light: #F0F0F0;
-            --accent-blue: #0A84FF; /* Акцент iOS */
-            --accent-red: #FF453A;
-            --input-bg: #1C1C1E;
-            --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            --border-radius-xl: 14px;
+            --bg-deep: #0a0a0a;
+            --bg-card: #181818;
+            --text-light: #f0f0f0;
+            --accent-main: #FF00FF; /* Яркий, агрессивный пурпурный */
+            --accent-alt: #00FFFF;  /* Кислотный циан */
+            --accent-red: #FF3333;
+            --font-main: monospace, "Courier New", Courier;
+            --border-radius-main: 6px;
         }
         body {
             font-family: var(--font-main);
@@ -28,7 +28,7 @@
             align-items: center;
             min-height: 100vh;
             text-align: center;
-            transition: background-color 0.3s;
+            touch-action: manipulation;
         }
         .container {
             width: 100%;
@@ -36,141 +36,168 @@
         }
         /* === АНИМАЦИЯ КОТА === */
         #catDisplay {
-            font-size: 110px;
+            font-size: 130px;
             margin-bottom: 5px;
             line-height: 1;
-            transition: transform 0.2s, text-shadow 0.2s;
-            /* Глубокий эффект */
-            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+            text-shadow: 0 0 5px var(--accent-main);
+            transition: transform 0.1s, color 0.1s;
             cursor: pointer;
         }
-        .cat-name {
-            color: var(--accent-blue);
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 20px;
-        }
-        /* Анимация "злости/активации" */
-        @keyframes subtlePulse {
-            0% { box-shadow: 0 0 0 rgba(10, 132, 255, 0.4); }
-            50% { box-shadow: 0 0 10px rgba(10, 132, 255, 0.8); }
-            100% { box-shadow: 0 0 0 rgba(10, 132, 255, 0.4); }
-        }
-        .thinking-box {
-            border: 2px solid var(--accent-blue);
-            animation: subtlePulse 1.5s infinite;
-        }
-
-        /* === ОБЛАЧКО ДИАЛОГА (АЙС 26 КАРТОЧКА) === */
-        #chatOutput {
-            background: var(--bg-card);
-            padding: 20px;
-            border-radius: var(--border-radius-xl);
-            margin-bottom: 20px;
-            min-height: 90px;
-            text-align: left;
-            font-size: 16px;
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* Глубина */
-            line-height: 1.5;
-            transition: background-color 0.3s;
-        }
-        .message-status {
-            color: var(--accent-blue);
-            font-weight: 600;
-            margin-right: 5px;
-        }
-        .user-text {
-            color: #C0C0C0;
-        }
-        a {
-            color: var(--accent-blue);
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        /* === ИНПУТ === */
-        .input-area {
-            display: flex;
-            margin-bottom: 20px;
-            width: 100%;
-        }
-        #textInput {
-            flex-grow: 1;
-            padding: 15px;
-            border: none;
-            border-radius: var(--border-radius-xl) 0 0 var(--border-radius-xl);
-            background: var(--input-bg);
-            color: var(--text-light);
-            font-size: 16px;
-            outline: none;
-            transition: box-shadow 0.2s;
-        }
-        #textInput:focus {
-            box-shadow: 0 0 0 2px var(--accent-blue);
-        }
-        #sendButton {
-            padding: 15px;
-            width: 90px;
-            border: none;
-            border-radius: 0 var(--border-radius-xl) var(--border-radius-xl) 0;
-            background: var(--accent-blue);
-            color: var(--text-light);
+        .mood-text {
+            color: var(--accent-alt);
             font-weight: 700;
-            cursor: pointer;
-            transition: background-color 0.1s, transform 0.1s;
-        }
-        #sendButton:active {
-            transform: scale(0.98);
-        }
-        #sendButton:disabled {
-            background: #505050;
+            font-size: 18px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 2px var(--accent-alt);
         }
 
-        /* === ДОП. ФУНКЦИИ === */
-        .function-buttons {
+        /* === КАРТОЧКА СТАТУСА (УХОД) === */
+        .status-card {
+            background: var(--bg-card);
+            border: 1px solid var(--accent-main);
+            padding: 15px;
+            border-radius: var(--border-radius-main);
+            margin-bottom: 20px;
+            box-shadow: 0 0 10px rgba(255, 0, 255, 0.2);
+        }
+        .stats-grid {
             display: flex;
             justify-content: space-between;
             gap: 10px;
-            width: 100%;
         }
-        .function-buttons button {
+        .stat-item {
             flex: 1;
-            padding: 14px 8px;
+            text-align: left;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .stat-bar-bg {
+            height: 8px;
+            background: #333;
+            border-radius: 2px;
+            margin-top: 4px;
+            overflow: hidden;
+        }
+        .stat-bar-fill {
+            height: 100%;
+            transition: width 0.3s ease-out, background-color 0.3s;
+        }
+        
+        /* === БЛОК ДИАЛОГА (ЧИСТЫЙ) === */
+        #chatOutput {
+            background: var(--bg-card);
+            padding: 15px;
+            border-left: 3px solid var(--accent-main);
+            border-radius: var(--border-radius-main);
+            margin-bottom: 20px;
+            min-height: 80px;
+            text-align: left;
+            font-size: 15px;
+            line-height: 1.4;
+        }
+        .message-status {
+            color: var(--accent-alt);
+            font-weight: 700;
+            margin-right: 5px;
+        }
+
+        /* === ДЕЙСТВИЯ И ИНПУТ === */
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .actions-grid button {
+            padding: 10px;
             background: var(--bg-card);
             color: var(--text-light);
-            border: none;
-            border-radius: var(--border-radius-xl);
-            font-weight: 600;
+            border: 1px solid var(--accent-alt);
+            border-radius: var(--border-radius-main);
+            font-weight: 700;
             font-size: 13px;
             cursor: pointer;
-            transition: background-color 0.1s, transform 0.1s;
+            transition: background-color 0.1s;
         }
-        .function-buttons button:active {
-            background: #3c3c3e;
-            transform: scale(0.97);
+        .actions-grid button:active {
+            background: var(--accent-alt);
+            color: var(--bg-deep);
         }
-        #insultBtn { color: var(--accent-red); }
-        #statusBtn { color: var(--accent-blue); }
+        
+        /* ЧАТ */
+        #textInput {
+            flex-grow: 1;
+            padding: 15px;
+            border: 1px solid #333;
+            border-radius: var(--border-radius-main);
+            background: var(--input-bg);
+            color: var(--text-light);
+            font-size: 14px;
+            outline: none;
+            width: calc(100% - 30px);
+            margin-bottom: 10px;
+        }
+        #sendButton {
+            padding: 15px;
+            background: var(--accent-main);
+            color: var(--bg-deep);
+            border: none;
+            border-radius: var(--border-radius-main);
+            font-weight: 900;
+            cursor: pointer;
+            transition: background-color 0.1s;
+        }
+
+        .function-buttons button {
+            background: var(--bg-card);
+            border: 1px solid #333;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div id="catDisplay" class="cat-emote">😼</div>
-        <div class="cat-name" id="catNameDisplay">...ЖДЕМ ТЕБЯ, ХОЗЯИН-БОМЖ</div>
+        <div class="mood-text" id="catMoodDisplay">Я В НОРМЕ, НЕ ДОЕБЫВАЙСЯ</div>
+
+        <div class="status-card">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    ГОЛОД<br>
+                    <div class="stat-bar-bg">
+                        <div id="hungerBar" class="stat-bar-fill" style="width: 100%; background-color: var(--accent-green);"></div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    ЭНЕРГИЯ<br>
+                    <div class="stat-bar-bg">
+                        <div id="energyBar" class="stat-bar-fill" style="width: 100%; background-color: var(--accent-green);"></div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    НАСТРОЕНИЕ<br>
+                    <div class="stat-bar-bg">
+                        <div id="moodBar" class="stat-bar-fill" style="width: 100%; background-color: var(--accent-main);"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="actions-grid">
+            <button id="feedBtn">ПОКОРМИТЬ 🥩</button>
+            <button id="playBtn">ПОИГРАТЬ 🎾</button>
+            <button id="restBtn">ДАТЬ ПОСПАТЬ 😴</button>
+        </div>
 
         <div id="chatOutput">
             <span class="message-status">КОТ БАЮН:</span>
             Привет, *лох*. Готов к токсичному общению?
         </div>
 
-        <div class="input-area">
-            <input type="text" id="textInput" placeholder="Спроси у меня про свой канал, *мелкий*...">
-            <button id="sendButton">СПРОСИТЬ</button>
-        </div>
+        <input type="text" id="textInput" placeholder="Спроси что-нибудь, если смелый...">
+        <button id="sendButton">СПРОСИТЬ</button>
 
-        <div class="function-buttons">
+        <div class="function-buttons" style="margin-top: 15px;">
             <button id="insultBtn">ОЦЕНКА УСПЕШНОСТИ</button>
-            <button id="shareBtn">ПОДЕЛИТЬСЯ ХУЕСОСОМ</button>
             <button id="statusBtn">КАНАЛЬНЫЙ НАДЗОР</button>
         </div>
     </div>
@@ -180,111 +207,137 @@
         const TWA = window.Telegram.WebApp;
         TWA.ready();
         TWA.expand(); 
-        TWA.setHeaderColor('#1A1A1A'); 
-        TWA.setBackgroundColor('#1A1A1A');
+        TWA.setHeaderColor('#0a0a0a'); 
+        TWA.setBackgroundColor('#0a0a0a');
 
-        // === ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ И ИЛЛЮЗИЯ ОБУЧЕНИЯ ===
+        // === ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ И СТАТУС ПИТОМЦА ===
         let userName = TWA.initDataUnsafe.user?.first_name || "Хозяин-Бомж";
         let catName = "КОТ БАЮН";
-        let userTopics = {}; // Иллюзия памяти: храним, что юзер спрашивал
-        const INSULT_MAX = 5;
+        const DECAY_RATE = 1000 * 60 * 5; // Упадок каждые 5 минут
+        
+        // ВАЖНО: URL БЭКЕНДА (ЗДЕСЬ БУДЕТ ВАШ СЕРВЕР)
+        const BACKEND_URL = 'https://YOUR_ACTUAL_BACKEND_URL/api/chat'; 
+        
+        let petState = {
+            hunger: 100,
+            energy: 100,
+            mood: 100,
+            lastUpdate: Date.now()
+        };
 
-        // === ХРАНЕНИЕ (localStorage) ===
-        const CAT_NAME_KEY = 'cat_bayun_name_v6';
-        const USER_TOPICS_KEY = 'cat_bayun_topics_v6';
-
-        function loadData() {
-            const savedCatName = localStorage.getItem(CAT_NAME_KEY);
-            const savedTopics = localStorage.getItem(USER_TOPICS_KEY);
-            if (savedCatName) catName = savedCatName;
-            if (savedTopics) userTopics = JSON.parse(savedTopics);
-        }
-
-        function saveData() {
-            localStorage.setItem(CAT_NAME_KEY, catName);
-            localStorage.setItem(USER_TOPICS_KEY, JSON.stringify(userTopics));
-        }
-
-        // === DOM ЭЛЕМЕНТЫ ===
+        // === DOM ЭЛЕМЕНТЫ (только основные) ===
         const catDisplay = document.getElementById('catDisplay');
-        const catNameDisplay = document.getElementById('catNameDisplay');
+        const catMoodDisplay = document.getElementById('catMoodDisplay');
         const chatOutput = document.getElementById('chatOutput');
         const textInput = document.getElementById('textInput');
         const sendButton = document.getElementById('sendButton');
-        const container = document.querySelector('.container');
-
-        // === АНИМАЦИИ И ЭМОЦИИ ===
-        const catEmotes = {
-            default: '😼', 
-            bored: '🥱',   
-            thinking: '🧐', 
-            angry: '😡',    
-            happy: '🤑',    
-            fact: '🖕',    
-            wise: '🤔',
+        const bars = {
+            hunger: document.getElementById('hungerBar'),
+            energy: document.getElementById('energyBar'),
+            mood: document.getElementById('moodBar')
+        };
+        const buttons = {
+             feed: document.getElementById('feedBtn'),
+             play: document.getElementById('playBtn'),
+             rest: document.getElementById('restBtn'),
+             insult: document.getElementById('insultBtn'),
+             status: document.getElementById('statusBtn')
+        };
+        const catEmotes = { 
+            default: '😼', bored: '🥱', thinking: '🧐', angry: '😡', happy: '😻', fact: '🖕', wise: '🤔', hungry: '😿', sleepy: '😾'
         };
 
+        // === ХРАНЕНИЕ И СТАТУС ===
+        const PET_STATE_KEY = 'pet_state_v7';
+        const CAT_NAME_KEY = 'cat_bayun_name_v7';
+
+        function loadState() {
+            const savedState = localStorage.getItem(PET_STATE_KEY);
+            const savedName = localStorage.getItem(CAT_NAME_KEY);
+            if (savedState) petState = JSON.parse(savedState);
+            if (savedName) catName = savedName;
+            
+            // Расчет упадка (Decay)
+            const now = Date.now();
+            const timeElapsed = now - petState.lastUpdate;
+            const decayAmount = Math.floor(timeElapsed / DECAY_RATE);
+
+            if (decayAmount > 0) {
+                 petState.hunger = Math.max(0, petState.hunger - decayAmount * 10);
+                 petState.energy = Math.max(0, petState.energy - decayAmount * 5);
+                 petState.mood = Math.max(0, petState.mood - decayAmount * 8);
+            }
+            petState.lastUpdate = now;
+            saveState();
+        }
+
+        function saveState() {
+            localStorage.setItem(PET_STATE_KEY, JSON.stringify(petState));
+            localStorage.setItem(CAT_NAME_KEY, catName);
+        }
+
+        function updateUI() {
+            const getBarColor = (value) => {
+                if (value > 70) return 'var(--accent-green)';
+                if (value > 30) return 'var(--accent-main)';
+                return 'var(--accent-red)';
+            };
+
+            for (const stat in bars) {
+                const value = petState[stat];
+                bars[stat].style.width = `${value}%`;
+                bars[stat].style.backgroundColor = getBarColor(value);
+            }
+
+            let moodText = "Я В НОРМЕ, НЕ ДОЕБЫВАЙСЯ";
+            setCatEmote('default');
+
+            if (petState.hunger < 30) { moodText = "БЛЯДЬ, Я ГОЛОДЕН, ИДИ НАХУЙ! 😿"; setCatEmote('hungry'); }
+            else if (petState.energy < 30) { moodText = "Я УСТАЛ, СУКА, НЕ ТРОГАЙ МЕНЯ! 😾"; setCatEmote('sleepy'); }
+            else if (petState.mood < 30) { moodText = "ТЫ МЕНЯ БЕСИШЬ! ТЫ ХУЁВЫЙ ХОЗЯИН! 😡"; setCatEmote('angry'); }
+            else if (petState.mood > 90) { moodText = "МНЕ НОРМ. СЕГОДНЯ ТЫ МНЕ НРАВИШЬСЯ. 😻"; setCatEmote('happy'); }
+
+            catMoodDisplay.textContent = moodText;
+            catMoodDisplay.style.color = getBarColor(petState.mood); // Цвет зависит от настроения
+        }
+        
         function setCatEmote(emoteKey) {
             catDisplay.textContent = catEmotes[emoteKey] || catEmotes.default;
-            catDisplay.style.color = emoteKey === 'angry' ? 'var(--accent-red)' : 'var(--text-light)';
-            
-            // Иллюзия активности (рамка, как при "Айс 26")
-            if (emoteKey === 'thinking') {
-                 chatOutput.classList.add('thinking-box');
-            } else {
-                 chatOutput.classList.remove('thinking-box');
+        }
+
+        // === АВТОРСКИЙ КОД: ОБЩЕНИЕ ЧЕРЕЗ БЭКЕНД ===
+        async function getBackendResponse(userText) {
+            // Здесь мы отправляем запрос на реальный AI-сервер
+            try {
+                const response = await fetch(BACKEND_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        user_id: TWA.initDataUnsafe.user?.id || 'guest',
+                        user_name: userName,
+                        user_message: userText,
+                        pet_state: petState
+                    })
+                });
+
+                if (!response.ok) throw new Error("Backend error or bad status");
+
+                const data = await response.json();
+                
+                // data.message - AI-ответ
+                // data.pet_reaction - новая эмоция (опционально)
+                return data.message || "ОШИБКА: Бэкенд не вернул ответ, но я тут!";
+
+            } catch (error) {
+                // Если бэкенд недоступен, возвращаемся к шаблонам
+                console.error("AI Backend failed, reverting to local templates:", error);
+                
+                // ВНИМАНИЕ: Здесь должна быть ваша старая логика getResponse из V7.0!
+                return "СЕРВЕР СГОРЕЛ, МУДИЛА! Я ВЕРНУЛСЯ К ПРИМИТИВНЫМ ОТВЕТАМ! (Проверь консоль, лох)";
             }
         }
 
-        // === ЛОГИКА ДИАЛОГА (ИЛЛЮЗИЯ ОБУЧЕНИЯ) ===
-        function getResponse(userText) {
-            const text = userText.toLowerCase();
-
-            // 1. ПРОВЕРКА ПАМЯТИ (Иллюзия обучения)
-            for (const topic in userTopics) {
-                 if (text.includes(topic)) {
-                     // Если пользователь спрашивал об этом раньше, Кот токсично "помнит"
-                     setCatEmote('bored');
-                     return `Слушай, *${userName}*, ты уже спрашивал про **${topic.toUpperCase()}** ${userTopics[topic]} раз. Ты что, тупой? Вот тебе мой старый, охуенный совет: ${getResponse(topic)}`;
-                 }
-            }
-
-            // 2. ТОКСИЧНЫЕ СОВЕТЫ (Ключевые слова)
-            if (text.includes('заработать') || text.includes('схема') || text.includes('деньги')) {
-                // Записываем в память
-                userTopics['заработок'] = (userTopics['заработок'] || 0) + 1;
-                setCatEmote('wise');
-                return `Опять про бабло? **ТЫ СЕРЬЕЗНО?** Ладно. ${userName}, лучший совет: **найди, что бесит людей, и продай им решение. Но ты слишком ленив для этого.** Иди, погугли что-нибудь полезное: <a href="https://www.google.com/search?q=лучшие+схемы+заработка+в+тг" target="_blank">ЛУЧШИЕ СХЕМЫ, ЛОХ</a>.`;
-            }
-
-            if (text.includes('канал') || text.includes('посты') || text.includes('продвижение')) {
-                 userTopics['каналы'] = (userTopics['каналы'] || 0) + 1;
-                 setCatEmote('wise');
-                 return `Ты, ${userName}, думаешь, что постинг — это хуйня? **ТЫ ОШИБАЕШЬСЯ!** Чтобы канал рос, ты должен **ДАВАТЬ БОЛЬШЕ ЦЕННОСТИ, ЧЕМ ТВОИ КОНКУРЕНТЫ, ДЕБИЛ!** Иначе ты будешь сосать. Вот тебе почитать: <a href="https://telegra.ph/" target="_blank">ИДИ ПИШИ НОРМАЛЬНЫЙ КОНТЕНТ</a>.`;
-            }
-
-            // 3. ОБЩИЕ ОТВЕТЫ
-            if (text.includes('как дела') || text.includes('что делаешь')) {
-                setCatEmote('bored');
-                return `Мои дела? Мне скучно. Я жду, пока ты сделаешь что-то умное. А ты?`;
-            }
-
-            if (text.includes('ты кто') || text.includes('что ты за кот')) {
-                setCatEmote('fact');
-                return `Я — **${catName}**. Я — твой личный токсичный ментор. Если ты не хочешь, чтобы тебя унижали, не спрашивай тупые вопросы.`;
-            }
-
-            if (text.includes('красава') || text.includes('спасибо')) {
-                 setCatEmote('happy');
-                 return `Да похуй. Ты всё равно проиграешь. Иди дальше.`;
-            }
-
-            // 4. ДЕФОЛТНЫЙ ГНЕВ (Сброс)
-            setCatEmote('angry');
-            return `Чё ты вообще написал, ${userName}? Это какая-то **АБСОЛЮТНАЯ ХУЙНЯ**. Ты что, тупой? Иди подумай ещё раз, прежде чем мне писать, **ЕБЛАН**.`;
-        }
-
-        function handleSend() {
+        async function handleSend() {
             const userText = textInput.value.trim();
             if (!userText) {
                 TWA.HapticFeedback.notificationOccurred('error');
@@ -293,100 +346,85 @@
                 return;
             }
 
-            // 1. Отобразить сообщение пользователя
-            chatOutput.innerHTML = `<span class="message-status">${userName} (ТЫ):</span> <span class="user-text">${userText}</span><br>`;
+            chatOutput.innerHTML = `<span class="message-status">${userName} (ТЫ):</span> ${userText}<br>`;
             
-            // 2. Имитация задержки и мышления
+            // Блокировка
             sendButton.disabled = true;
-            sendButton.textContent = 'ДУМАЕТ...';
+            sendButton.textContent = 'ДУМАЕТ AI...';
             textInput.disabled = true;
             setCatEmote('thinking');
 
-            setTimeout(() => {
-                // 3. Получить и отобразить ответ Кота
-                const response = getResponse(userText);
-                chatOutput.innerHTML += `<span class="message-status">${catName}:</span> ${response}`;
+            const response = await getBackendResponse(userText); // Ждём ответ от AI
 
-                // 4. Сброс состояния
-                textInput.value = '';
-                sendButton.disabled = false;
-                sendButton.textContent = 'СПРОСИТЬ';
-                textInput.disabled = false;
-                TWA.HapticFeedback.impactOccurred('light');
-                setCatEmote('default');
-                saveData(); // Сохраняем "память"
-            }, 1200); 
+            chatOutput.innerHTML += `<span class="message-status">${catName}:</span> ${response}`;
+
+            // Сброс
+            textInput.value = '';
+            sendButton.disabled = false;
+            sendButton.textContent = 'СПРОСИТЬ';
+            textInput.disabled = false;
+            TWA.HapticFeedback.impactOccurred('light');
+            updateUI();
         }
 
-        // === ДОП. ФУНКЦИИ ===
+        // === ДЕЙСТВИЯ ПО УХОДУ (Остаются прежними) ===
+        function updateStat(stat, amount) {
+            petState[stat] = Math.min(100, Math.max(0, petState[stat] + amount));
+            petState.lastUpdate = Date.now(); 
+            saveState();
+            updateUI();
+        }
 
-        // Оценка Успешности (Оценка ЧСВ)
-        document.getElementById('insultBtn').addEventListener('click', () => {
-             TWA.HapticFeedback.impactOccurred('heavy');
-             setCatEmote('fact');
-             
-             const insults = [
-                 "Ты — живой пример того, как не надо делать. Успешность: 2/10.",
-                 "Твой канал/бизнес — говно. Но ты молодец, что стараешься (нет). Успешность: 4/10.",
-                 "Ты достиг дна. Теперь ты можешь только расти (или сдохнуть). Успешность: 1/10.",
-                 "Ты настолько тупой, что я даже не знаю, как тебе помочь. Успешность: 0/10.",
-                 "Неплохо, но я бы сделал лучше. Успешность: 6/10 (и это с натяжкой)."
-             ];
+        buttons.feed.addEventListener('click', () => { updateStat('hunger', 30); updateStat('mood', 15); updateStat('energy', -10); chatOutput.innerHTML = `<span class="message-status">${catName}:</span> **МНЕ НОРМ!** А теперь иди отсюда.`; TWA.HapticFeedback.notificationOccurred('success'); });
+        buttons.play.addEventListener('click', () => { if (petState.energy < 20) { chatOutput.innerHTML = `<span class="message-status">${catName}:</span> **НЕТ, СУКА!** Иди, дай мне поспать.`; setCatEmote('sleepy'); TWA.HapticFeedback.notificationOccurred('error'); return;} updateStat('energy', -20); updateStat('mood', 30); updateStat('hunger', -10); chatOutput.innerHTML = `<span class="message-status">${catName}:</span> **МЯУ!** Я даже почти получил удовольствие.`; TWA.HapticFeedback.notificationOccurred('success'); });
+        buttons.rest.addEventListener('click', () => { updateStat('energy', 50); updateStat('mood', 10); chatOutput.innerHTML = `<span class="message-status">${catName}:</span> **ОТВАЛИ!** Я сплю.`; TWA.HapticFeedback.notificationOccurred('success'); });
+        
+        buttons.insult.addEventListener('click', () => {
+             updateStat('mood', -20);
+             const insults = ["ТЫ БЕСПОЛЕЗЕН, как кнопка 'Обновить' на бумаге.", "Твои шансы на успех ниже, чем у кота в космосе.", "Ты — позорище, и это не лечится."];
              const randomInsult = insults[Math.floor(Math.random() * insults.length)];
-
-             chatOutput.innerHTML = `<span class="message-status">${catName}:</span> **ОЦЕНКА ТВОЕЙ УСПЕШНОСТИ:** ${randomInsult}`;
+             chatOutput.innerHTML = `<span class="message-status">${catName}:</span> **ОЦЕНКА УСПЕШНОСТИ:** ${randomInsult}`;
+             TWA.HapticFeedback.notificationOccurred('error'); updateUI();
         });
-
-        // Поделиться Хуесосом
-        document.getElementById('shareBtn').addEventListener('click', () => {
-            const shareText = `Мой токсичный ментор, ${catName}, только что назвал меня "${userName}" и сказал: "${chatOutput.textContent.split(':').pop().trim()}". Иди проверь свою психику!`;
-            
-            TWA.openTelegramLink(`https://t.me/share/url?text=${encodeURIComponent(shareText)}`);
-            
-            chatOutput.innerHTML = `<span class="message-status">${catName}:</span> Я отправил твой позор в чаты. Пусть другие тоже посмеются над тобой.`;
-            setCatEmote('happy'); 
-        });
-
-        // Канальный Надзор (Имитация Помощи)
-        document.getElementById('statusBtn').addEventListener('click', () => {
-            TWA.showConfirm(`Ну чё, ${userName}, ты там в канале/чате своем что-нибудь сделал, *хозяин-бомж*? (Скажи правду, я всё равно тебе не поверю)`, (confirmed) => {
+        
+        buttons.status.addEventListener('click', () => {
+            TWA.showConfirm(`Ну чё, ${userName}, ты там в канале/чате своем что-нибудь сделал?`, (confirmed) => {
+                 updateStat('mood', -5);
                  if (confirmed) {
-                    chatOutput.innerHTML = `<span class="message-status">${catName}:</span> Сделал? **ВРЁШЬ! ТЫ ТАМ НИХУЯ НЕ ДЕЛАЕШЬ!** Твоя статистика — говно. Иди делай!`;
+                    chatOutput.innerHTML = `<span class="message-status">${catName}:</span> Сделал? **ВРЁШЬ! ТЫ ТАМ НИХУЯ НЕ ДЕЛАЕШЬ!**`;
                     setCatEmote('angry');
                  } else {
-                    chatOutput.innerHTML = `<span class="message-status">${catName}:</span> Признался, что ничего не сделал. **ХОТЬ ЧЕСТНЫЙ ДЕБИЛ!** Иди делай, иначе я тебя забью.`;
+                    chatOutput.innerHTML = `<span class="message-status">${catName}:</span> Признался. **ХОТЬ ЧЕСТНЫЙ ДЕБИЛ!** Иди делай!`;
                     setCatEmote('fact');
                  }
+                 updateUI();
             });
         });
 
         // === ИНИЦИАЛИЗАЦИЯ ===
         function initializeApp() {
-            loadData();
-            catNameDisplay.textContent = `${catName} — ТВОЙ ТОКСИЧНЫЙ МЕНТОР`;
-            TWA.HapticFeedback.impactOccurred('medium');
+            loadState();
+            updateUI(); 
 
-            // Первый запуск - запросить имя
             if (!localStorage.getItem(CAT_NAME_KEY)) {
                 setTimeout(() => {
                     const newName = prompt("Эй, *лох*, ты кто? Придумай для меня угарное имя:");
                     if (newName && newName.trim().length > 0) {
                         catName = newName.toUpperCase().trim();
-                        saveData();
-                        catNameDisplay.textContent = `${catName} — ТВОЙ ТОКСИЧНЫЙ МЕНТОР!`;
-                        chatOutput.innerHTML = `<span class="message-status">${catName}:</span> Теперь я **${catName}**. Я запомнил. А теперь пиздуй, задавай тупые вопросы!`;
+                        saveState();
                     }
+                    catMoodDisplay.textContent = `${catName} — ТВОЙ ТОКСИЧНЫЙ МЕНТОР`;
                 }, 500);
             } else {
-                 chatOutput.innerHTML = `<span class="message-status">${catName}:</span> Я тут, *${userName}*. Чё надо? Не отвлекай меня от деградации.`;
+                 catMoodDisplay.textContent = `${catName} — ТВОЙ ТОКСИЧНЫЙ МЕНТОР`;
             }
+
+            setInterval(updateUI, 5000); 
         }
 
-        catDisplay.addEventListener('click', () => TWA.HapticFeedback.impactOccurred('medium'));
         sendButton.addEventListener('click', handleSend);
-        textInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') handleSend();
-        });
+        textInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSend(); });
+        catDisplay.addEventListener('click', () => TWA.HapticFeedback.impactOccurred('medium'));
 
         initializeApp();
     </script>
