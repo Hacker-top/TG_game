@@ -3,23 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>УГАР-СЛОТ V3.0: НА РЕМОНТЕ</title>
+    <title>КОТ БАЮН: ХУЕСОС-ПОМОЩНИК</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* === Стилизация: УГАРНЫЙ НЕОН (V3.0) === */
+        /* === Стилизация: МРАЧНЫЙ КИБЕРПАНК === */
         :root {
-            --bg-primary: #111111;
-            --bg-secondary: #222222;
-            --neon-green: #39ff14; /* Основной акцент */
-            --neon-yellow: #fff000; /* Вторичный акцент/слоты */
-            --neon-red: #ff073a;
+            --bg-dark: #0a0a0a;
+            --bg-card: #1c1c1e;
             --text-light: #ffffff;
+            --text-neon: #ff66c4; /* Ярко-розовый для Кота */
+            --input-bg: #2c2c2e;
+            --btn-bg: #4a4a4a;
             --font-main: "Impact", "Arial Black", sans-serif;
-            --border-radius-main: 10px;
+            --border-radius-main: 12px;
         }
         body {
             font-family: var(--font-main);
-            background-color: var(--bg-primary);
+            background-color: var(--bg-dark);
             color: var(--text-light);
             margin: 0;
             padding: 10px;
@@ -28,205 +28,117 @@
             align-items: center;
             min-height: 100vh;
             text-align: center;
-            line-height: 1.2;
-            -webkit-user-select: none; /* Блокировка выделения */
         }
         .container {
             width: 100%;
             max-width: 450px;
-            padding: 0 5px;
         }
-        h1 {
-            color: var(--neon-green);
-            font-size: 38px;
-            margin: 10px 0;
-            text-shadow: 0 0 5px var(--neon-green), 0 0 10px rgba(57, 255, 20, 0.5);
+        /* === АНИМАЦИЯ КОТА === */
+        #catDisplay {
+            font-size: 100px;
+            margin-bottom: 10px;
+            line-height: 1;
+            text-shadow: 0 0 10px var(--text-neon), 0 0 20px rgba(255, 102, 196, 0.5);
         }
-        
-        /* === Статус-Бар === */
-        .header-status {
-            display: flex;
-            justify-content: space-between;
-            background: var(--bg-secondary);
-            padding: 15px 10px;
-            border-radius: var(--border-radius-main);
-            margin-bottom: 15px;
-            font-weight: 800;
-            border: 2px solid var(--neon-green);
-            box-shadow: 0 0 10px rgba(57, 255, 20, 0.3);
+        .cat-name {
+            color: var(--text-neon);
+            font-size: 24px;
+            margin-bottom: 20px;
         }
-        .balance, .stat {
-            flex: 1;
-            text-align: center;
+        /* Анимация "злости" Кота */
+        @keyframes angryShake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px) rotate(1deg); }
+            50% { transform: translateX(5px) rotate(-1deg); }
+            75% { transform: translateX(-5px) rotate(1deg); }
+            100% { transform: translateX(0); }
         }
-        .balance-amount {
-            color: var(--neon-green);
-            font-size: 26px;
-            display: block;
-            margin-top: 3px;
-            transition: color 0.1s, text-shadow 0.1s;
-        }
-        /* Анимация баланса при выигрыше */
-        .balance-amount.win-flash {
-            color: var(--neon-yellow);
-            text-shadow: 0 0 8px var(--neon-yellow);
+        .angry {
+            animation: angryShake 0.1s ease-in-out infinite;
         }
         
-        /* === Слот-Машина === */
-        .slot-area {
-            background: #000;
+        /* === ОБЛАЧКО ДИАЛОГА === */
+        #chatOutput {
+            background: var(--bg-card);
+            color: var(--text-light);
             padding: 15px;
             border-radius: var(--border-radius-main);
             margin-bottom: 20px;
-            border: 3px solid var(--neon-yellow);
-            box-shadow: 0 0 15px rgba(255, 240, 0, 0.4);
+            min-height: 80px;
+            text-align: left;
+            font-size: 18px;
+            border: 1px solid var(--text-neon);
         }
-        .reels {
+        .message-status {
+            color: var(--text-neon);
+            font-weight: 700;
+        }
+
+        /* === ИНПУТ === */
+        .input-area {
             display: flex;
-            justify-content: space-around;
-            margin-bottom: 15px;
-            height: 120px;
-            overflow: hidden;
-            border: 4px solid var(--text-light);
-            border-radius: 8px;
-            background: #000;
+            margin-bottom: 20px;
         }
-        .reel {
-            width: 33.333%;
-            font-size: 80px;
-            line-height: 120px;
-            text-shadow: 0 0 10px var(--neon-yellow);
-            color: var(--neon-yellow);
-            font-weight: 900;
-            transition: transform 0.1s linear;
-        }
-        .reel.final-win {
-             color: var(--neon-green);
-             text-shadow: 0 0 15px var(--neon-green);
-        }
-        .spinning .reel {
-            animation: spin-reel-effect 0.05s linear infinite;
-        }
-        @keyframes spin-reel-effect {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(-60px); }
-        }
-        
-        /* === Управление === */
-        button {
-            width: 100%;
-            padding: 18px;
-            font-size: 20px;
-            font-weight: 900;
+        #textInput {
+            flex-grow: 1;
+            padding: 15px;
             border: none;
-            border-radius: var(--border-radius-main);
+            border-radius: var(--border-radius-main) 0 0 var(--border-radius-main);
+            background: var(--input-bg);
+            color: var(--text-light);
+            font-size: 16px;
+            outline: none;
+        }
+        #sendButton {
+            padding: 15px;
+            width: 80px;
+            border: none;
+            border-radius: 0 var(--border-radius-main) var(--border-radius-main) 0;
+            background: var(--text-neon);
+            color: var(--bg-dark);
+            font-weight: 900;
             cursor: pointer;
-            transition: background-color 0.1s, transform 0.05s;
-            text-transform: uppercase;
+            transition: background-color 0.1s;
         }
-        #spinButton {
-            background-color: var(--neon-green);
-            color: #111;
-        }
-        #spinButton:active, .function-buttons button:active, .bet-selector button:active {
+        #sendButton:active {
             transform: scale(0.98);
         }
-        #spinButton:disabled {
-            background-color: #555;
-            color: #bbb;
-            cursor: not-allowed;
-            text-shadow: none;
-        }
 
-        /* Выбор ставки */
-        .bet-selector {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-        .bet-selector button {
-            width: calc(33.333% - 7px);
-            padding: 10px;
-            font-size: 14px;
-            background: var(--bg-secondary);
-            color: var(--text-light);
-        }
-        .bet-selector button.active {
-            background: var(--neon-yellow);
-            color: #111;
-            border: 2px solid var(--neon-green);
-        }
-
-        /* Доп. функции */
+        /* === ДОП. ФУНКЦИИ === */
         .function-buttons {
             display: flex;
             justify-content: space-between;
-            flex-wrap: wrap;
-            margin-top: 10px;
+            gap: 10px;
         }
         .function-buttons button {
-            background-color: var(--bg-secondary);
-            color: var(--text-light);
-            font-size: 14px;
+            flex: 1;
             padding: 12px;
-            margin: 5px 0;
-            width: calc(50% - 5px);
-        }
-        #resetBtn {
-             background-color: var(--neon-red);
-             color: var(--text-light);
-        }
-
-        /* === Сообщения (Угар) === */
-        .message-box {
-            min-height: 50px;
-            background: var(--bg-secondary);
+            background: var(--btn-bg);
+            color: var(--text-light);
+            border: none;
             border-radius: var(--border-radius-main);
-            padding: 15px;
-            margin-top: 15px;
-            font-style: italic;
-            font-size: 18px;
-            text-align: center;
             font-weight: 700;
-            border: 1px solid var(--neon-green);
+            font-size: 14px;
+            cursor: pointer;
         }
-        .win-message { color: var(--neon-yellow); text-shadow: 0 0 5px var(--neon-yellow); }
-        .lose-message { color: var(--neon-red); text-shadow: 0 0 3px var(--neon-red); }
-        .info-message { color: var(--neon-green); }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>💣 УГАР-СЛОТ 💩</h1>
-        <p style="font-size: 14px; color: #aaa;">Дизайн поднят, кнопки ебашат. Давай, крути!</p>
+        <div id="catDisplay" class="cat-emote">😼</div>
+        <div class="cat-name" id="catNameDisplay">...ЖДЕМ ТЕБЯ, ХОЗЯИН-БОМЖ</div>
 
-        <div class="header-status">
-            <div class="balance">БАЛАНС<br><span class="balance-amount" id="balanceDisplay">0 $</span></div>
-            <div class="stat">СПИНОВ<br><span id="spinsCount">0</span></div>
+        <div id="chatOutput"><span class="message-status">КОТ БАЮН:</span> Эй, *лох*, давай, напиши что-нибудь. Я жду, пока ты проснёшься.</div>
+
+        <div class="input-area">
+            <input type="text" id="textInput" placeholder="Пиши свой тупой вопрос сюда...">
+            <button id="sendButton">ХУЯРЬ</button>
         </div>
-
-        <div class="slot-area">
-             <div class="bet-selector" id="betSelector">
-                <button data-bet="50">СТАВКА 50</button>
-                <button data-bet="100" class="active">СТАВКА 100</button>
-                <button data-bet="500">СТАВКА 500</button>
-            </div>
-
-            <div class="reels" id="reels">
-                <div class="reel" id="reel1">🍒</div>
-                <div class="reel" id="reel2">7️⃣</div>
-                <div class="reel" id="reel3">💩</div>
-            </div>
-            
-            <button id="spinButton">КРУТАНУТЬ, ЕПТА!</button>
-        </div>
-
-        <div class="message-box info-message" id="messageBox">ЗАГРУЗКА... БАЛАНС ЖДЕТ.</div>
 
         <div class="function-buttons">
-            <button id="depositBtn">ДЕП (ФАНТИКИ: +500)</button>
-            <button id="ratingBtn">РЕЙТИНГ (ТОП УГАРА)</button>
-            <button id="resetBtn">СБРОС ПРОГРЕССА</button>
+            <button id="insultBtn">САМОВЫЕБАН</button>
+            <button id="shareBtn">ПОДЕЛИТЬСЯ УГАРОМ</button>
+            <button id="statusBtn">КАНАЛЬНЫЙ НАДЗОР</button>
         </div>
     </div>
 
@@ -235,260 +147,200 @@
         const TWA = window.Telegram.WebApp;
         TWA.ready();
         TWA.expand(); 
-        // Используем темные цвета темы Telegram
-        TWA.setHeaderColor('#1c1c1e');
-        TWA.setBackgroundColor('#111111');
+        TWA.setHeaderColor('#0a0a0a'); 
+        TWA.setBackgroundColor('#0a0a0a');
 
-        // === Игровые Параметры ===
-        let balance = 1000;
-        let betAmount = 100;
-        let spins = 0;
-        let isSpinning = false;
-        // ⭐ - Wild, 💩 - Fails, 7️⃣ - Jackpot
-        const symbols = ['🍒', '🍋', '🔔', '7️⃣', '💩', '⭐']; 
+        // === ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+        let userName = TWA.initDataUnsafe.user?.first_name || "Хозяин-Бомж";
+        let catName = "КОТ БАЮН";
+        let insultLevel = 0; // Уровень раздражения Кота
+        const INSULT_MAX = 5;
+
+        // === DOM ЭЛЕМЕНТЫ ===
+        const catDisplay = document.getElementById('catDisplay');
+        const catNameDisplay = document.getElementById('catNameDisplay');
+        const chatOutput = document.getElementById('chatOutput');
+        const textInput = document.getElementById('textInput');
+        const sendButton = document.getElementById('sendButton');
+
+        // === ХРАНЕНИЕ (localStorage) ===
+        const CAT_NAME_KEY = 'cat_bayun_name';
+
+        function loadData() {
+            const savedCatName = localStorage.getItem(CAT_NAME_KEY);
+            if (savedCatName) {
+                catName = savedCatName;
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem(CAT_NAME_KEY, catName);
+        }
+
+        // === ЛОГИКА ДИАЛОГА И МАТОВ ===
         
-        const BALANCE_KEY = 'ugar_slot_balance_v3'; // Обновленный ключ для V3
-        const SPINS_KEY = 'ugar_slot_spins_v3';
+        // Массив эмоций Кота
+        const catEmotes = {
+            default: '😼', // Обычная ухмылка
+            bored: '🥱',   // Скука
+            thinking: '🧐', // Думает (презрительно)
+            angry: '😡',    // Злость
+            happy: '🤑',    // Выиграл/рад
+            fact: '🖕',    // Фак
+        };
 
-        // === DOM Элементы ===
-        const balanceDisplay = document.getElementById('balanceDisplay');
-        const spinsCountDisplay = document.getElementById('spinsCount');
-        const reelElements = [
-            document.getElementById('reel1'),
-            document.getElementById('reel2'),
-            document.getElementById('reel3')
-        ];
-        const spinButton = document.getElementById('spinButton');
-        const messageBox = document.getElementById('messageBox');
-        const betSelector = document.getElementById('betSelector');
-
-        // === 1. СОХРАНЕНИЕ / ЗАГРУЗКА ===
-        function saveProgress() {
-            try {
-                localStorage.setItem(BALANCE_KEY, balance);
-                localStorage.setItem(SPINS_KEY, spins);
-                TWA.HapticFeedback.impactOccurred('soft');
-            } catch (e) {
-                console.error("Не удалось сохранить прогресс:", e);
-                TWA.showAlert("Ошибка сохранения прогресса. Память браузера, блядь, забита!");
-            }
-        }
-
-        function loadProgress() {
-            try {
-                const savedBalance = localStorage.getItem(BALANCE_KEY);
-                const savedSpins = localStorage.getItem(SPINS_KEY);
-
-                if (savedBalance !== null && !isNaN(parseInt(savedBalance, 10))) {
-                    balance = parseInt(savedBalance, 10);
-                }
-                if (savedSpins !== null && !isNaN(parseInt(savedSpins, 10))) {
-                    spins = parseInt(savedSpins, 10);
-                }
-            } catch (e) {
-                console.error("Не удалось загрузить прогресс:", e);
-            }
-        }
-
-        // === 2. ОБНОВЛЕНИЕ ИНТЕРФЕЙСА ===
-        function updateUI() {
-            balanceDisplay.textContent = `${balance} $`;
-            spinsCountDisplay.textContent = spins;
-            
-            // Визуальный индикатор низкого баланса
-            balanceDisplay.style.color = balance < betAmount * 2 ? 'var(--neon-red)' : 'var(--neon-green)';
-
-            if (balance < betAmount) {
-                spinButton.disabled = true;
-                spinButton.textContent = `ТЫ БОМЖ! (${betAmount}$ нужно)`;
-                messageBox.className = 'message-box lose-message';
-                messageBox.textContent = 'БАБЛА НЕТ, ПИЗДЕЦ! ИДИ ДЕПНИ СРОЧНО!';
-            } else if (!isSpinning) {
-                 spinButton.disabled = false;
-                 spinButton.textContent = `КРУТАНУТЬ, ЕПТА! (СТАВКА: ${betAmount} $)`;
-                 messageBox.className = 'message-box info-message';
-            }
-        }
-
-        // === 3. ЛОГИКА СЛОТОВ ===
-        function getRandomSymbol() {
-            return symbols[Math.floor(Math.random() * symbols.length)];
-        }
-
-        function determineWin(results) {
-            const wilds = results.filter(s => s === '⭐').length;
-
-            // Функция проверки комбинации (с учетом Wild)
-            const checkCombo = (sym) => results.filter(s => s === sym || s === '⭐').length >= 3;
-
-            // 1. Джекпот и Супер-Выигрыши
-            if (checkCombo('7️⃣')) {
-                const win = betAmount * 69; // 69 - это угар
-                return { win: win, msg: `***ЕБАТЬ! ТРИ 7️⃣! СУПЕР-УГАР! +${win}$!***`, type: 'win' };
-            }
-            if (wilds === 3) {
-                 const win = betAmount * 100;
-                 return { win: win, msg: '***ТРИ ЗВЕЗДЫ!!! ТЫ ПОБЕДИТЕЛЬ ПО ЖИЗНИ! +'+win+'$!***', type: 'win' };
-            }
-            
-            // 2. Средние Выигрыши
-            for (const sym of symbols.filter(s => s !== '⭐' && s !== '7️⃣')) {
-                if (checkCombo(sym)) {
-                    const win = betAmount * 15;
-                    return { win: win, msg: `ТРИ РАЗА ${sym}! НОРМ ТЕМА! +${win}$!`, type: 'win' };
-                }
-            }
-            
-            // 3. Мелкие выигрыши
-            const uniqueSymbols = [...new Set(results)].filter(s => s !== '⭐');
-            if (uniqueSymbols.length <= 1 && wilds < 3) { // 2 одинаковых + Wild или 2 одинаковых
-                const win = betAmount * 3;
-                return { win: win, msg: `Две в ряд! МИНИ-ПРИЗ! +${win}$!`, type: 'win' };
-            }
-            
-            // 4. Поражения
-            if (results.includes('💩')) {
-                 const msg = results.filter(s => s === '💩').length >= 2
-                    ? 'АХАХА! ДВЕ ГОВНО-ИКОНКИ! ТЫ СЛОВИЛ СОРТИР! МИНУС БАБЛО, ЛОХ!'
-                    : 'СЛОВИЛ 💩! СТАВКА В МУСОРКУ!';
-                 return { win: 0, msg: msg, type: 'lose' };
-            }
-            
-            // Полный проигрыш
-            return { win: 0, msg: 'ПРОЕБАЛ ВСЕ, ЧТО МОГ! КРУТИ ЕЩЕ, ТРЯПКА!', type: 'lose' };
-        }
-
-        function spinReel(reel, finalSymbol, delay) {
-            return new Promise(resolve => {
-                reel.parentElement.classList.add('spinning');
-                reel.textContent = '❌'; 
-
-                setTimeout(() => {
-                    // Анимация остановки
-                    reel.style.transition = 'transform 0.5s cubic-bezier(0.17, 0.84, 0.44, 1)';
-                    reel.parentElement.classList.remove('spinning');
-                    reel.textContent = finalSymbol;
-                    
-                    setTimeout(() => {
-                         reel.style.transition = 'none';
-                         resolve();
-                    }, 500); 
-
-                }, 500 + delay * 300); // Уменьшил время для более быстрого темпа
-            });
-        }
-
-        async function handleSpin() {
-            if (isSpinning || balance < betAmount) return;
-
-            isSpinning = true;
-            spinButton.disabled = true;
-            spinButton.textContent = 'КРУТИМ... ПОШЛА ЖАРА!';
-
-            balance -= betAmount;
-            spins++;
-            updateUI();
-            TWA.HapticFeedback.impactOccurred('heavy'); 
-
-            // Убираем старые классы выигрыша
-            reelElements.forEach(r => r.classList.remove('final-win'));
-            
-            // 1. Определяем финальные символы
-            const finalResults = [getRandomSymbol(), getRandomSymbol(), getRandomSymbol()];
-            
-            // 2. Анимируем каждый барабан
-            await spinReel(reelElements[0], finalResults[0], 0);
-            await spinReel(reelElements[1], finalResults[1], 1);
-            await spinReel(reelElements[2], finalResults[2], 2);
-            
-
-            // 3. Расчет выигрыша
-            const { win, msg, type } = determineWin(finalResults);
-            
-            if (win > 0) {
-                balance += win + betAmount; 
-                TWA.HapticFeedback.notificationOccurred('success');
-                messageBox.className = 'message-box win-message';
-                balanceDisplay.classList.add('win-flash'); // Включаем мигание
-                setTimeout(() => balanceDisplay.classList.remove('win-flash'), 500);
-
-                // Подсветка выигрышных барабанов
-                reelElements.forEach(r => r.classList.add('final-win'));
+        function setCatEmote(emoteKey) {
+            catDisplay.textContent = catEmotes[emoteKey] || catEmotes.default;
+            if (emoteKey === 'angry' || emoteKey === 'fact') {
+                 catDisplay.classList.add('angry');
             } else {
-                 TWA.HapticFeedback.notificationOccurred('error');
-                 messageBox.className = 'message-box lose-message';
+                 catDisplay.classList.remove('angry');
             }
-            
-            messageBox.innerHTML = msg; 
-
-            // 4. Завершение
-            isSpinning = false;
-            saveProgress(); 
-            updateUI();
         }
 
-        // === 4. ОБРАБОТЧИКИ КНОПОК ===
-        
-        // Выбор ставки
-        betSelector.addEventListener('click', (e) => {
-            const newBet = parseInt(e.target.dataset.bet, 10);
-            if (!isNaN(newBet) && !isSpinning) {
-                document.querySelectorAll('.bet-selector button').forEach(btn => btn.classList.remove('active'));
-                e.target.classList.add('active');
-                betAmount = newBet;
-                updateUI();
-                TWA.HapticFeedback.impactOccurred('light');
+        function getResponse(userText) {
+            const text = userText.toLowerCase();
+
+            // 1. Токсичные Советы и Полезность
+            if (text.includes('заработать') || text.includes('деньги') || text.includes('схема') || text.includes('доход')) {
+                setCatEmote('thinking');
+                return `Опять ты про бабло? Ты нахуй, что ли, сюда пришел? Ладно, слушай, *${userName}*. Чтобы заработать, надо **НЕ БЫТЬ ТАКИМ ЛОХОМ**, как ты. Найди, что сейчас в тренде, и **ВПИЗДЯЧЬ ТУДА ВСЕ ДЕНЬГИ!** Вот, ищи тут: <a href="https://www.google.com/search?q=тренды+телеграм" target="_blank" style="color:var(--text-neon)">ГОТОВЫЕ СХЕМЫ</a>. И не спрашивай больше эту хуйню!`;
             }
-        });
 
-        // Депозит
-        document.getElementById('depositBtn').addEventListener('click', () => {
-             const depAmount = 500;
-             balance += depAmount;
-             TWA.showAlert(`ОГО! +${depAmount} $! Фантики зачислены, епта!`, () => {
-                saveProgress();
-                updateUI();
-                TWA.HapticFeedback.notificationOccurred('success');
-             });
-        });
+            if (text.includes('бот') || text.includes('telegram') || text.includes('канал')) {
+                 setCatEmote('thinking');
+                 return `Ты, *${userName}*, думаешь, я тебе всё на тарелочке принесу? Учись гуглить, дебил. Но по сути: **ДЕЛАЙ КОНТЕНТ, КОТОРЫЙ РАЗЪЕБЁТ ИХ МОЗГИ** или **БЕРИ И ГОТОВЬ БЭКЕНД, ЕСЛИ НЕ ТРЯПКА!**`;
+            }
 
-        // Рейтинг (заглушка)
-        document.getElementById('ratingBtn').addEventListener('click', () => {
-             const top1 = balance * 2 + 500;
-             TWA.showConfirm(`РЕЙТИНГ ТОП-3 (Фантики):
-             1. ХУЛИГАН - ${top1}$
-             2. ТВОЙ ДРУГ - ${balance + 100}$
-             3. ТЫ - ${balance}$
+            // 2. Унижение и ЧСВ Кота
+            if (text.includes('как дела') || text.includes('что делаешь')) {
+                setCatEmote('bored');
+                return `Да хули тут делать? Я смотрю на твою тупую рожу и деградирую. А ты? Надеюсь, ты занимаешься чем-то более полезным, чем писанина мне.`;
+            }
+            if (text.includes('ты кто') || text.includes('что ты за кот')) {
+                setCatEmote('fact');
+                return `Я — **${catName}**, твой персональный кошмар и токсичный друг. Я — единственная причина, по которой ты ещё не сдох со скуки, *лох*.`;
+            }
+            if (text.includes('красава') || text.includes('спасибо') || text.includes('молодец')) {
+                 setCatEmote('default');
+                 return `Да похуй. Мне не нужны твои лестные слова. Давай, пиздуй.`;
+            }
+
+            // 3. Универсальный Запасной Ответ (Максимальный Мат)
+            setCatEmote('angry');
+            return `Чё ты вообще написал, *${userName}*? Это какая-то **ХУЙНЯ**. Ты что, тупой? Иди подумай ещё раз, прежде чем мне писать, еблан.`;
+        }
+
+        function handleSend() {
+            const userText = textInput.value.trim();
+            if (!userText) {
+                TWA.HapticFeedback.notificationOccurred('error');
+                setCatEmote('angry');
+                chatOutput.innerHTML = `<span class="message-status">${catName}:</span> **ТЫ ЗАБЫЛ НАПИСАТЬ ТЕКСТ, МУДИЛА!**`;
+                return;
+            }
+
+            // 1. Отобразить сообщение пользователя
+            chatOutput.innerHTML = `<span class="message-status">${userName}:</span> ${userText}<br>`;
+            
+            // 2. Имитация задержки (Кот думает)
+            sendButton.disabled = true;
+            sendButton.textContent = 'ДУМАЕТ';
+            textInput.disabled = true;
+            setCatEmote('thinking');
+
+            setTimeout(() => {
+                // 3. Получить и отобразить ответ Кота
+                const response = getResponse(userText);
+                chatOutput.innerHTML += `<span class="message-status">${catName}:</span> ${response}`;
+
+                // 4. Сброс состояния
+                textInput.value = '';
+                sendButton.disabled = false;
+                sendButton.textContent = 'ХУЯРЬ';
+                textInput.disabled = false;
+                TWA.HapticFeedback.impactOccurred('light');
+                setCatEmote('default');
+            }, 1000); 
+        }
+
+        // === ДОП. ФУНКЦИИ ===
+
+        // Самый Разъеб - Самовыёбан
+        document.getElementById('insultBtn').addEventListener('click', () => {
+             TWA.HapticFeedback.impactOccurred('heavy');
+             setCatEmote('fact');
              
-             Хочешь войти в ТОП? Для этого надо ${top1 - balance}$!`, (confirmed) => {
-                 if (confirmed) {
-                     messageBox.textContent = 'Крути дальше, может повезет. ЭТО ТЕБЕ НЕ БЭКЕНД, ЭТО ПРОСТО НАДПИСЬ!';
-                 }
-             });
+             const insult = [
+                 "ТЫ ГОВНО",
+                 "У ТЕБЯ РУКИ ИЗ ЖОПЫ",
+                 "ТЫ ЛОХ, А НЕ ХОЗЯИН",
+                 "ПОШЁЛ НАХУЙ"
+             ];
+             const randomInsult = insult[Math.floor(Math.random() * insult.length)];
+
+             chatOutput.innerHTML = `<span class="message-status">${catName}:</span> ${userName}, ты хотел услышать правду? **${randomInsult}**! А теперь давай, самоунижайся.`;
         });
 
-        // СБРОС ПРОГРЕССА
-        document.getElementById('resetBtn').addEventListener('click', () => {
-            TWA.showConfirm('ТЫ УВЕРЕН, ЧТО ХОЧЕШЬ СБРОСИТЬ ВСЕ? НАЧНЕМ С 1000$.', (confirmed) => {
-                if (confirmed) {
-                    balance = 1000;
-                    spins = 0;
-                    localStorage.removeItem(BALANCE_KEY);
-                    localStorage.removeItem(SPINS_KEY);
-                    updateUI();
-                    TWA.showAlert('Прогресс обнулен. Играй по-новой, епта!');
-                    TWA.HapticFeedback.notificationOccurred('success');
-                } else {
-                    messageBox.textContent = 'Правильно, не сливай прогресс, жмот!';
-                }
+        // Поделиться Угаром
+        document.getElementById('shareBtn').addEventListener('click', () => {
+            const shareText = `Мой питомец-помощник, ${catName}, только что назвал меня "${userName}" и сказал: "${chatOutput.textContent.split(':').pop().trim()}". Иди проверь свою психику!`;
+            
+            TWA.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(TWA.initData)}&text=${encodeURIComponent(shareText)}`);
+            
+            chatOutput.innerHTML = `<span class="message-status">${catName}:</span> Я отправил твой позор в чаты. Пусть другие тоже посмеются над тобой.`;
+            setCatEmote('happy'); 
+        });
+
+        // Канальный Надзор
+        document.getElementById('statusBtn').addEventListener('click', () => {
+            TWA.showConfirm(`Ну чё, ${userName}, ты там в канале/чате своем что-нибудь сделал, *хозяин-бомж*?`, (confirmed) => {
+                 if (confirmed) {
+                    chatOutput.innerHTML = `<span class="message-status">${catName}:</span> Сделал? **ВРЁШЬ! ТЫ ТАМ НИХУЯ НЕ ДЕЛАЕШЬ!** Иди поработай, ленивый кусок говна!`;
+                    setCatEmote('angry');
+                 } else {
+                    chatOutput.innerHTML = `<span class="message-status">${catName}:</span> Признался, что ничего не сделал. **ХОТЬ ЧЕСТНЫЙ ДЕБИЛ!** Иди делай!`;
+                    setCatEmote('fact');
+                 }
             });
         });
 
-        spinButton.addEventListener('click', handleSpin);
+        // === ИНИЦИАЛИЗАЦИЯ ===
+        function initializeApp() {
+            loadData();
+            catNameDisplay.textContent = `${catName} — ЖДЕМ ТЕБЯ, ${userName.toUpperCase()}`;
+            TWA.HapticFeedback.impactOccurred('medium');
 
-        // === 5. ИНИЦИАЛИЗАЦИЯ ===
-        loadProgress();
-        updateUI();
+            // Проверка, первый ли запуск
+            if (!localStorage.getItem(CAT_NAME_KEY)) {
+                setTimeout(() => {
+                    TWA.showPopup({
+                        title: "ЗАНОВО!",
+                        message: `Эй, *лох*, ты кто? Как тебя называть, *${userName}*? Придумай для меня угарное имя.`,
+                        buttons: [{id: 'input', text: 'ПРИДУМАТЬ', type: 'default'}]
+                    }, (buttonId) => {
+                         if (buttonId === 'input') {
+                            const newName = prompt("Введи имя для Кота (например, ПИСЬКА):");
+                            if (newName && newName.trim().length > 0) {
+                                catName = newName.toUpperCase().trim();
+                                saveData();
+                                catNameDisplay.textContent = `${catName} — ТВОЙ ХУЕСОС-ПОМОЩНИК!`;
+                                chatOutput.innerHTML = `<span class="message-status">${catName}:</span> Теперь я **${catName}**. Я запомнил. А теперь пиздуй, задавай тупые вопросы!`;
+                            }
+                         }
+                    });
+                }, 500);
+            } else {
+                 chatOutput.innerHTML = `<span class="message-status">${catName}:</span> Я тут, *${userName}*. Чё надо? Не отвлекай меня от деградации.`;
+            }
+        }
+
+        sendButton.addEventListener('click', handleSend);
+        textInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleSend();
+        });
+
+        initializeApp();
     </script>
 </body>
 </html>
